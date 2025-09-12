@@ -1,3 +1,7 @@
+// BadSchoolProgram.cs
+// Chương trình quản lý trường học bằng C# cực kỳ BAD CODE
+// Gồm: Sinh viên, Giáo viên, Môn học, Đăng ký, Điểm
+// Tất cả lưu bằng List<string> kiểu "id|field1|field2|..."
 
 using System;
 using System.Collections.Generic;
@@ -59,31 +63,9 @@ public class StudentService
 }
 // Program.cs
 
-public class BadSchoolProgram
-using System.Linq;
-
-
-class Student
+public class CleanSchoolProgram
 {
-    public string Id { get; set; }
-    public string Name { get; set; }
-    public int Age { get; set; }
-    public double Gpa { get; set; }
-    public override string ToString() => $"[Student] ID:{Id} Name:{Name} Age:{Age} GPA:{Gpa}";
-}
-
-class Teacher
-{
-    public string Id { get; set; }
-    public string Name { get; set; }
-    public string Major { get; set; }
-    public override string ToString() => $"[Teacher] ID:{Id} Name:{Name} Major:{Major}";
-}
-
-class Course
-{
-    private static StudentService studentService = new();
-
+    private static readonly StudentService studentService = new();
     public static void Main(string[] args)
     {
         int menu = 0;

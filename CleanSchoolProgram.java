@@ -1,7 +1,11 @@
+// Git giữ hộ lịch sử, lỡ dại thì còn đường về!
 // _ví dụ 1_ sửa code bẩn thành code sạch BongBaby hehe!
 // Clean OOP version với Menu tổng hợp
+<<<<<<< HEAD
 // test demo git
-//phanduyk20eaa
+//duyach
+
+>>>>>>> ee20f8830a880dd89a797bb3b3c9f16af0f7364f
 import java.util.*;
 
 interface IManager<T> {

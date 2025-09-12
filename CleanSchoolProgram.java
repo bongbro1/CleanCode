@@ -1,7 +1,13 @@
 // Git giữ hộ lịch sử, lỡ dại thì còn đường về!
 // _ví dụ 1_ sửa code bẩn thành code sạch BongBaby hehe!
 // Clean OOP version với Menu tổng hợp
+<<<<<<< HEAD
+// test demo git
+//duyphanbg1
 
+>>>>>>> ee20f8830a880dd89a797bb3b3c9f16af0f7364f
+//phanduyaaa
+// duy
 import java.util.*;
 
 interface IManager<T> {
@@ -80,7 +86,7 @@ class TeacherManager implements IManager<Teacher> {
     public Teacher findById(String id) { return list.stream().filter(t -> t.id.equals(id)).findFirst().orElse(null); }
     public void showAll() { list.forEach(System.out::println); }
 }
-
+//duy//
 class CourseManager implements IManager<Course> {
     private List<Course> list = new ArrayList<>();
     public void add(Course c) { list.add(c); }

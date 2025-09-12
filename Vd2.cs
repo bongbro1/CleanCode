@@ -1,9 +1,65 @@
-// Git giữ hộ lịch sử, lỡ dại thì còn đường về!
-// _ví dụ 2_ sửa code bẩn thành code sạch BongBaby hehe!
-// Clean School Program
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
+// Student.cs
+public class Student
+{
+    public string Id { get; }
+    public string Name { get; private set; }
+    public int Age { get; private set; }
+    public double GPA { get; private set; }
+
+    public Student(string id, string name, int age, double gpa)
+    {
+        Id = id;
+        Name = name;
+        Age = age;
+        GPA = gpa;
+    }
+
+    public void Update(string name, int age, double gpa)
+    {
+        Name = name;
+        Age = age;
+        GPA = gpa;
+    }
+
+    public override string ToString()
+    {
+        return $"ID:{Id} | Name:{Name} | Age:{Age} | GPA:{GPA}";
+    }
+}
+// StudentService.cs
+
+public class StudentService
+{
+    private readonly List<Student> _students = new();
+
+    public void Add(Student s) => _students.Add(s);
+    public void Remove(string id) => _students.RemoveAll(s => s.Id == id);
+    public void Update(string id, string newName, int newAge, double newGpa)
+    {
+        var s = _students.FirstOrDefault(st => st.Id == id);
+        if (s != null) s.Update(newName, newAge, newGpa);
+    }
+    public void ShowAll() => _students.ForEach(Console.WriteLine);
+    public void FindByName(string name)
+    {
+        var result = _students.Where(s => s.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+        foreach (var s in result) Console.WriteLine(s);
+    }
+    public void ShowExcellent()
+    {
+        var result = _students.Where(s => s.GPA > 8.0);
+        foreach (var s in result) Console.WriteLine("Sinh viên giỏi: " + s);
+    }
+    public void SortByName() => _students.Sort((a, b) => a.Name.CompareTo(b.Name));
+    public void SortByGpa() => _students.Sort((a, b) => b.GPA.CompareTo(a.GPA));
+}
+// Program.cs
+
+public class BadSchoolProgram
 using System.Linq;
 
 
@@ -26,176 +82,99 @@ class Teacher
 
 class Course
 {
-    public string Id { get; set; }
-    public string Name { get; set; }
-    public int Credits { get; set; }
-    public override string ToString() => $"[Course] ID:{Id} Name:{Name} Credits:{Credits}";
-}
+    private static StudentService studentService = new();
 
-class Enrollment
-{
-    public Student Student { get; set; }
-    public Course Course { get; set; }
-    public override string ToString() => $"[Enroll] {Student.Name} -> {Course.Name}";
-}
-
-class Grade
-{
-    public Student Student { get; set; }
-    public Course Course { get; set; }
-    public double Score { get; set; }
-    public override string ToString() => $"[Grade] {Student.Name} {Course.Name} = {Score}";
-}
-
-interface IManager<T>
-{
-    void Add(T item);
-    void Remove(string id);
-    void ShowAll();
-    T FindById(string id);
-}
-
-class StudentManager : IManager<Student>
-{
-    private List<Student> students = new();
-
-    public void Add(Student s) => students.Add(s);
-    public void Remove(string id) => students.RemoveAll(s => s.Id == id);
-    public Student FindById(string id) => students.FirstOrDefault(s => s.Id == id);
-    public void ShowAll() => students.ForEach(Console.WriteLine);
-
-    public void FindByName(string name) =>
-        students.Where(s => s.Name.Contains(name, StringComparison.OrdinalIgnoreCase))
-                .ToList().ForEach(Console.WriteLine);
-
-    public void SortByName() { students = students.OrderBy(s => s.Name).ToList(); ShowAll(); }
-    public void SortByGpa() { students = students.OrderByDescending(s => s.Gpa).ToList(); ShowAll(); }
-}
-
-class TeacherManager : IManager<Teacher>
-{
-    private List<Teacher> teachers = new();
-
-    public void Add(Teacher t) => teachers.Add(t);
-    public void Remove(string id) => teachers.RemoveAll(t => t.Id == id);
-    public Teacher FindById(string id) => teachers.FirstOrDefault(t => t.Id == id);
-    public void ShowAll() => teachers.ForEach(Console.WriteLine);
-}
-
-class CourseManager : IManager<Course>
-{
-    private List<Course> courses = new();
-
-    public void Add(Course c) => courses.Add(c);
-    public void Remove(string id) => courses.RemoveAll(c => c.Id == id);
-    public Course FindById(string id) => courses.FirstOrDefault(c => c.Id == id);
-    public void ShowAll() => courses.ForEach(Console.WriteLine);
-}
-
-class EnrollmentManager : IManager<Enrollment>
-{
-    private List<Enrollment> enrollments = new();
-
-    public void Add(Enrollment e) => enrollments.Add(e);
-    public void Remove(string id) => enrollments.RemoveAll(e => e.Student.Id == id);
-    public Enrollment FindById(string id) => enrollments.FirstOrDefault(e => e.Student.Id == id);
-    public void ShowAll() => enrollments.ForEach(Console.WriteLine);
-}
-
-class GradeManager : IManager<Grade>
-{
-    private List<Grade> grades = new();
-
-    public void Add(Grade g) => grades.Add(g);
-    public void Remove(string id) => grades.RemoveAll(gr => gr.Student.Id == id);
-    public Grade FindById(string id) => grades.FirstOrDefault(gr => gr.Student.Id == id);
-    public void ShowAll() => grades.ForEach(Console.WriteLine);
-}
-
-
-
-class Menu
-{
-    private readonly StudentManager sm = new();
-    private readonly TeacherManager tm = new();
-    private readonly CourseManager cm = new();
-    private readonly EnrollmentManager em = new();
-    private readonly GradeManager gm = new();
-
-    public void Run()
+    public static void Main(string[] args)
     {
         int menu = 0;
         while (menu != 99)
         {
-            Console.WriteLine("\n=== MENU ===");
-            Console.WriteLine("1. Quan ly Sinh vien");
-            Console.WriteLine("2. Quan ly Giao vien");
-            Console.WriteLine("3. Quan ly Mon hoc");
-            Console.WriteLine("4. Quan ly Dang ky hoc");
-            Console.WriteLine("5. Quan ly Diem");
-            Console.WriteLine("99. Thoat");
-            Console.Write("Chon: ");
-            menu = ReadInt();
+            Console.WriteLine("============= MENU CHÍNH =============");
+            Console.WriteLine("1. Quản lý Sinh viên");
+            Console.WriteLine("99. Thoát");
+            Console.Write("Nhập lựa chọn: ");
+            menu = int.Parse(Console.ReadLine() ?? "0");
 
             switch (menu)
             {
                 case 1: StudentMenu(); break;
-                case 2: tm.ShowAll(); break;
-                case 3: cm.ShowAll(); break;
-                case 4: em.ShowAll(); break;
-                case 5: gm.ShowAll(); break;
+                case 99: Console.WriteLine("Thoát chương trình."); break;
+                default: Console.WriteLine("Lựa chọn không hợp lệ."); break;
             }
         }
     }
 
-    private void StudentMenu()
+    private static void StudentMenu()
     {
-        int smenu = 0;
-        while (smenu != 9)
+        int menu;
+        do
         {
-            Console.WriteLine("\n--- QUAN LY SINH VIEN ---");
-            Console.WriteLine("1. Them SV");
-            Console.WriteLine("2. Xoa SV");
-            Console.WriteLine("3. Hien thi tat ca");
-            Console.WriteLine("4. Tim theo ten");
-            Console.WriteLine("5. Sap xep theo ten");
-            Console.WriteLine("6. Sap xep theo GPA");
-            Console.WriteLine("9. Quay lai");
-            Console.Write("Chon: ");
-            smenu = ReadInt();
+            Console.WriteLine("--- QUẢN LÝ SINH VIÊN ---");
+            Console.WriteLine("1. Thêm SV");
+            Console.WriteLine("2. Xóa SV");
+            Console.WriteLine("3. Cập nhật SV");
+            Console.WriteLine("4. Hiển thị tất cả SV");
+            Console.WriteLine("5. Tìm SV theo tên");
+            Console.WriteLine("6. Tìm SV GPA > 8");
+            Console.WriteLine("7. Sắp xếp theo tên");
+            Console.WriteLine("8. Sắp xếp theo GPA");
+            Console.WriteLine("9. Quay lại");
+            Console.Write("Nhập lựa chọn: ");
+            menu = int.Parse(Console.ReadLine() ?? "0");
 
-            switch (smenu)
+            switch (menu)
             {
-                case 1:
-                    Console.Write("Nhap id: "); string id = Console.ReadLine();
-                    Console.Write("Nhap ten: "); string name = Console.ReadLine();
-                    Console.Write("Nhap tuoi: "); int age = ReadInt();
-                    Console.Write("Nhap GPA: "); double gpa = ReadDouble();
-                    sm.Add(new Student { Id = id, Name = name, Age = age, Gpa = gpa });
-                    break;
-                case 2:
-                    Console.Write("Nhap id can xoa: ");
-                    sm.Remove(Console.ReadLine());
-                    break;
-                case 3: sm.ShowAll(); break;
-                case 4:
-                    Console.Write("Nhap ten: ");
-                    sm.FindByName(Console.ReadLine());
-                    break;
-                case 5: sm.SortByName(); break;
-                case 6: sm.SortByGpa(); break;
+                case 1: AddStudent(); break;
+                case 2: RemoveStudent(); break;
+                case 3: UpdateStudent(); break;
+                case 4: studentService.ShowAll(); break;
+                case 5: FindStudentByName(); break;
+                case 6: studentService.ShowExcellent(); break;
+                case 7: studentService.SortByName(); Console.WriteLine("Đã sắp xếp theo tên."); break;
+                case 8: studentService.SortByGpa(); Console.WriteLine("Đã sắp xếp theo GPA."); break;
+                case 9: Console.WriteLine("Quay lại menu chính."); break;
+                default: Console.WriteLine("Lựa chọn không hợp lệ."); break;
             }
-        }
+        } while (menu != 9);
     }
 
-    private int ReadInt() => int.TryParse(Console.ReadLine(), out var x) ? x : 0;
-    private double ReadDouble() => double.TryParse(Console.ReadLine(), out var x) ? x : 0.0;
-}
-
-public class CleanSchoolProgram
-{
-    public static void Main(string[] args)
+    private static void AddStudent()
     {
-        new Menu().Run();
+        Console.Write("Nhập id: ");
+        string id = Console.ReadLine()!;
+        Console.Write("Nhập tên: ");
+        string name = Console.ReadLine()!;
+        Console.Write("Nhập tuổi: ");
+        int age = int.Parse(Console.ReadLine() ?? "0");
+        Console.Write("Nhập GPA: ");
+        double gpa = double.Parse(Console.ReadLine() ?? "0");
+        studentService.Add(new Student(id, name, age, gpa));
+    }
+
+    private static void RemoveStudent()
+    {
+        Console.Write("Nhập id cần xóa: ");
+        string id = Console.ReadLine()!;
+        studentService.Remove(id);
+    }
+
+    private static void UpdateStudent()
+    {
+        Console.Write("Nhập id cần cập nhật: ");
+        string id = Console.ReadLine()!;
+        Console.Write("Nhập tên mới: ");
+        string name = Console.ReadLine()!;
+        Console.Write("Nhập tuổi mới: ");
+        int age = int.Parse(Console.ReadLine() ?? "0");
+        Console.Write("Nhập GPA mới: ");
+        double gpa = double.Parse(Console.ReadLine() ?? "0");
+        studentService.Update(id, name, age, gpa);
+    }
+
+    private static void FindStudentByName()
+    {
+        Console.Write("Nhập tên: ");
+        string name = Console.ReadLine()!;
+        studentService.FindByName(name);
     }
 }
